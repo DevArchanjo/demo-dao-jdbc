@@ -52,19 +52,11 @@ public class SellerDaoJDBC implements SellerDao {
 			
 			st.setInt(1, id);
 			rs = st.executeQuery();//executa a query do comando sql acima
-			//Verificamos se atamos na linha 1 da tabela, pois a linha 0 não contém valores
+			//Verificamos se estamos na linha 1 da tabela, pois a linha 0 não contém valores
 			//se o resultado for true, entra no bloco do if e instanciamos os obj. Department e Seller com os valores do ResltSet
 			if (rs.next()) {
-				Department dep = new Department();
-				dep.setId(rs.getInt("DepartmentId"));
-				dep.setName(rs.getString("Name"));
-				Seller obj = new Seller();
-				obj.setId(rs.getInt("Id"));
-				obj.setName(rs.getString("Name"));
-				obj.setEmail(rs.getString("Email"));
-				obj.setBaseSalary(rs.getDouble("BaseSalary"));
-				obj.setBirthDate(rs.getDate("BirthDate"));
-				obj.setDepartment(dep);
+				Department dep = instantiateDepartment(rs);//metodo que instancia um departamento
+				Seller obj = instantiateSeller(rs, dep);
 				return obj;
 			}
 			return null;
@@ -79,6 +71,24 @@ public class SellerDaoJDBC implements SellerDao {
 			//sendo assim não é necessário fechar a conexão.
 		}
 		
+	}
+
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller obj = new Seller();
+		obj.setId(rs.getInt("Id"));
+		obj.setName(rs.getString("Name"));
+		obj.setEmail(rs.getString("Email"));
+		obj.setBaseSalary(rs.getDouble("BaseSalary"));
+		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setDepartment(dep);
+		return obj;
+	}
+
+	private Department instantiateDepartment(ResultSet rs) throws SQLException {
+		Department dep = new Department();
+		dep.setId(rs.getInt("DepartmentId"));
+		dep.setName(rs.getString("Name"));
+		return dep;
 	}
 
 	@Override
